@@ -1,23 +1,30 @@
 name: Publish addresses
 
 on:
+  release:
+    types: [created]
   push:
     branches: [main, task/*]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20.x'
           registry-url: 'https://npm.pkg.github.com'
+          scope: '@tickethic'
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Deploy addresses to specified network in .env file
+        run: npm run deploy
 
       - name: Publish to GitHub Packages
         run: npm publish
