@@ -1,7 +1,12 @@
 {
-  "name": "evm",
-  "version": "1.0.0",
+  "name": "@tickethic/contracts",
+  "version": "0.0.1",
   "type": "module",
+  "main": "contract-addresses.json",
+  "files": ["contract-addresses.json"],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "test": "npx hardhat test",
     "compile": "hardhat compile",
