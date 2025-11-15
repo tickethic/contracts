@@ -30,12 +30,14 @@ npm install
 ```
 
 ## Compilation
+**Needs to be fixed**
 
 ```bash
 npx hardhat compile
 ```
 
 ## Testing
+**Needs to be fixed**
 
 ```bash
 # All tests
@@ -48,7 +50,10 @@ npx hardhat test solidity
 ## Deployment
 
 ### Local Deployment
-
+Start a local Hardhat node and deploy the contracts:
+```bash
+npx hardhat node
+```
 ```bash
 npx hardhat ignition deploy ignition/modules/Tickethic.ts --network localhost
 ```
