@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import {DeploymentData} from "../src/contracts.js";
 
 async function loadArtifact(contractName: string) {
     const artifactPath = `../artifacts/contracts/${contractName}.sol/${contractName}.json`;
@@ -59,7 +60,7 @@ async function deployContracts() {
         const network = await provider.getNetwork();
         const chainId = Number(network.chainId);
 
-        const deploymentData = {
+        const deploymentData: DeploymentData = {
             timestamp: new Date().toISOString(),
             network: {
                 chainId: chainId,
@@ -69,13 +70,6 @@ async function deployContracts() {
             contracts: deployedContracts
         };
 
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = dirname(dirname(__filename));
-
-        const filePath = path.resolve(__dirname, 'contract-addresses.json');
-        fs.writeFileSync(filePath, JSON.stringify(deploymentData, null, 2));
-        console.log(`\n💾 Adresses des contrats sauvegardées dans ${filePath}`);
-
         return deploymentData;
     } catch (error) {
         console.error("❌ Erreur lors du déploiement:", error);
@@ -83,8 +77,20 @@ async function deployContracts() {
     }
 }
 
+function persistDeploymentData(data: DeploymentData) {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(dirname(__filename)) + '/dist';
+    if (!fs.existsSync(__dirname)){
+        fs.mkdirSync(__dirname);
+    }
+    const filePath = path.resolve(__dirname, 'contract-addresses.json');
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    console.log(`\n💾 Adresses des contrats sauvegardées dans ${filePath}`);
+}
+
 deployContracts()
-    .then(() => {
+    .then((deploymentData: DeploymentData) => {
+        persistDeploymentData(deploymentData);
         console.log("\n✅ Déploiement terminé avec succès!");
         process.exit(0);
     })
@@ -93,7 +99,7 @@ deployContracts()
 
         try {
             // Fallback to manual file creation (this can be removed after github actions debugging)
-            let deploymentData = {
+            let deploymentData: DeploymentData = {
                 "timestamp": "2025-11-08T10:33:04.659Z",
                 "network": {
                     "chainId": 80002,
@@ -107,11 +113,7 @@ deployContracts()
                     "EventManager": "0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8"
                 }
             }
-            const __filename = fileURLToPath(import.meta.url);
-            const __dirname = dirname(dirname(__filename));
-            const filePath = path.resolve(__dirname, 'contract-addresses.json');
-            fs.writeFileSync(filePath, JSON.stringify(deploymentData, null, 2));
-            console.log(`\n💾 Adresses des contrats sauvegardées dans ${filePath}`);
+            persistDeploymentData(deploymentData);
             process.exit(0);
         } catch(error) {
             console.error("❌ Échec de la sauvegarde des adresses des contrats:", error);

@@ -1,11 +1,17 @@
 {
   "name": "@tickethic/contracts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
-  "main": "contract-addresses.json",
-  "files": ["contract-addresses.json"],
+  "main": "dist/contract-addresses.json",
+  "files": [
+    "dist/contract-addresses.json"
+  ],
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tickethic/contracts.git"
   },
   "scripts": {
     "test": "npx hardhat test",
@@ -22,10 +28,10 @@
     "forge-std": "github:foundry-rs/forge-std#v1.9.4",
     "hardhat": "^3.0.4",
     "typescript": "~5.8.0",
-    "viem": "^2.37.3"
+    "viem": "^2.37.3",
+    "dotenv": "^17.2.2",
+    "@openzeppelin/contracts": "^5.4.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0",
-    "dotenv": "^17.2.2"
   }
 }
