@@ -1,25 +1,37 @@
 {
-  "name": "evm",
-  "version": "1.0.0",
+  "name": "@tickethic/contracts",
+  "version": "0.0.2",
   "type": "module",
+  "main": "dist/contract-addresses.json",
+  "files": [
+    "dist/contract-addresses.json"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tickethic/contracts.git"
+  },
   "scripts": {
     "test": "npx hardhat test",
     "compile": "hardhat compile",
-    "deploy:local": "npx hardhat ignition deploy ignition/modules/Tickethic.ts --network localhost",
-    "deploy:amoy": "npx hardhat ignition deploy ignition/modules/Tickethic.ts --network amoy",
-    "deploy:eventmanager": "npx hardhat ignition deploy ignition/modules/TickethicWithEventManager.ts --network amoy"
+    "deploy": "npx hardhat run ./scripts/deploy.ts",
+    "deploy:eventmanager": "npx hardhat ignition deploy ignition/modules/TickethicWithEventManager.ts --network localhost"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^4.0.3",
     "@nomicfoundation/hardhat-ignition": "^3.0.2",
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.0",
     "@types/node": "^22.18.1",
+    "ethers": "^6.15.0",
     "forge-std": "github:foundry-rs/forge-std#v1.9.4",
     "hardhat": "^3.0.4",
     "typescript": "~5.8.0",
-    "viem": "^2.37.3"
+    "viem": "^2.37.3",
+    "dotenv": "^17.2.2",
+    "@openzeppelin/contracts": "^5.4.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0",
-    "dotenv": "^17.2.2"
   }
 }

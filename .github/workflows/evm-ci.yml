@@ -26,7 +26,6 @@ jobs:
         run: git submodule update --init
 
       - name: Install dependencies
-        working-directory: ./evm
         run: npm ci
 
       - name: Run Forge build
