@@ -17,7 +17,7 @@
     "test": "npx hardhat test",
     "compile": "hardhat compile",
     "deploy": "npx hardhat run ./scripts/deploy.ts",
-    "deploy:eventmanager": "npx hardhat ignition deploy ignition/modules/TickethicWithEventManager.ts --network localhost"
+    "deploy:eventmanager": "npx hardhat ignition deploy ignition/modules/TickethicWithEventManager.ts --network amoy"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.3",
