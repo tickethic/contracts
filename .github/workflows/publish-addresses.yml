@@ -22,7 +22,7 @@ jobs:
           scope: '@tickethic'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Prepare env file
         run: |
