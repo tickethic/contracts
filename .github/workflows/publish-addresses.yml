@@ -30,7 +30,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           AMOY_RPC_URL: ${{ vars.AMOY_RPC_URL }}
           AMOY_PRIVATE_KEY: ${{ secrets.AMOY_PRIVATE_KEY }}
-        run: npm run deploy
+        run: npm run deploy:eventmanager
 
       - name: Publish to GitHub Packages
         run: npm publish
