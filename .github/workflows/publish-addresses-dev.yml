@@ -1,0 +1,41 @@
+name: Publish addresses
+
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+  push:
+    branches: [main, task/*]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '22.10.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@tickethic'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Clean workspace
+        run: rm -rf ignition/deployments
+
+      - name: Deploy addresses to specified network in .env file
+        env:
+          HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
+          RPC_URL: ${{ vars.RPC_URL }}
+          AMOY_RPC_URL: ${{ vars.AMOY_RPC_URL }}
+          AMOY_PRIVATE_KEY: ${{ secrets.AMOY_PRIVATE_KEY }}
+        run: npm run deploy:amoy
+
+      - name: Publish to GitHub Packages
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
