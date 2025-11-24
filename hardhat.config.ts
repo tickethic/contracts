@@ -44,7 +44,7 @@ const config: HardhatUserConfig = {
     },
     polygon: {
       type: "http",
-      chainType: "l2",
+      chainType: "l1",
       url: process.env.MAINNET_RPC_URL || "https://polygon-rpc.com",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 137,
