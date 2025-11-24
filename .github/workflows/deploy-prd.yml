@@ -28,7 +28,7 @@ jobs:
       - name: Clean workspace
         run: rm -rf ignition/deployments || true
 
-      - name: Deploy addresses to specified network in .env file
+      - name: Deploy
         env:
           HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
           RPC_URL: ${{ vars.RPC_URL }}
