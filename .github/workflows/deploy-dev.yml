@@ -28,7 +28,7 @@ jobs:
       - name: Clean workspace
         run: rm -rf ignition/deployments || true
 
-        - name: Vérifier variables d'environnement
+      - name: Vérifier variables d'environnement
         run: |
           echo "RPC_URL = $RPC_URL"
           if [ -z "$RPC_URL" ]; then echo "RPC_URL non défini !"; exit 1; else echo "RPC_URL OK"; fi
