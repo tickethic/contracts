@@ -1,11 +1,11 @@
-name: Publish addresses
+name: Deploy Production
 
 on:
   workflow_dispatch:
   release:
     types: [created]
   push:
-    branches: [main, task/*]
+    branches: [main]
 
 jobs:
   publish:
