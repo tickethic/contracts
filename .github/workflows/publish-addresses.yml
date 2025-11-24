@@ -27,14 +27,6 @@ jobs:
       - name: Clean workspace
         run: rm -rf ignition/deployments
 
-      - name: Prepare env file
-        run: |
-          cat <<'EOF' > .env
-          AMOY_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/QoYdtckotZTFKrp-oq-RX
-          AMOY_PRIVATE_KEY=${{ secrets.AMOY_PRIVATE_KEY }}
-          # add other env vars here if needed
-          EOF
-
       - name: Deploy addresses to specified network in .env file
         env:
           RPC_URL: ${{ vars.RPC_URL }}
