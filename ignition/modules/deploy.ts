@@ -40,29 +40,22 @@ const TickethicWithEventManagerModule = buildModule("TickethicWithEventManagerMo
     organizator
   ]);
 
+   // Créer le dossier dist si absent
+  if (!fs.existsSync("dist")) {
+    fs.mkdirSync("dist");
+  }
+
+  // Sauvegarder les adresses déployées
+  const addresses = {
+    artist: artist.address,
+    ticket: ticket.address,
+    organizator: organizator.address,
+    eventManager: eventManager.address,
+  };
+
+  fs.writeFileSync("dist/contract-addresses.json", JSON.stringify(addresses, null, 2));
+
   return { artist, ticket, organizator, event, eventManager };
 });
 
-// Fonction extérieure pour écrire les adresses après déploiement
-async function writeAddresses(deployedContracts: any) {
-  const distDir = "dist";
-  if (!fs.existsSync(distDir)) {
-    fs.mkdirSync(distDir);
-  }
-
-  const addresses = {
-    artist: deployedContracts.artist.address,
-    ticket: deployedContracts.ticket.address,
-    organizator: deployedContracts.organizator.address,
-    eventManager: deployedContracts.eventManager.address,
-  };
-
-  fs.writeFileSync(`${distDir}/contract-addresses.json`, JSON.stringify(addresses, null, 2));
-}
-
-// Override de la fonction default export pour y insérer l’écriture d’adresses
-export default async function (m: any) {
-  const deployed = await TickethicWithEventManagerModule(m);
-  await writeAddresses(deployed);
-  return deployed;
-}
+export default TickethicWithEventManagerModule;
