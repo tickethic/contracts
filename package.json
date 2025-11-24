@@ -16,7 +16,7 @@
   "scripts": {
     "test": "npx hardhat test",
     "compile": "hardhat compile",
-    "deploy:eventmanager": "npx hardhat ignition deploy ignition/modules/TickethicWithEventManager.ts --network amoy"
+    "deploy:eventmanager": "cross-env HARDHAT_IGNITION_CONFIRM_DEPLOYMENT=true npx hardhat ignition deploy ignition/modules/TickethicWithEventManager.ts --network amoy"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.3",
@@ -25,6 +25,7 @@
     "@types/node": "^22.18.1",
     "ethers": "^6.15.0",
     "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+    "cross-env": "^7.0.3",
     "hardhat": "^3.0.4",
     "typescript": "~5.8.0",
     "viem": "^2.37.3",
