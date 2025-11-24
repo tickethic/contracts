@@ -59,7 +59,9 @@ contract EventTest is Test {
             ticketPrice,
             totalTickets,
             address(ticketContract),
-            address(organizatorContract)
+            address(organizatorContract),
+            false,
+            false
         );
 
         // Make Event contract the owner of Ticket contract for minting
@@ -76,9 +78,14 @@ contract EventTest is Test {
         uint256 orgBefore = organizer.balance;
 
         vm.prank(buyer);
-        eventContract.buyTicket{value: ticketPrice}(1);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
 
         assertEq(ticketContract.balanceOf(buyer), 1, "Buyer should own 1 ticket");
+        assertEq(address(eventContract).balance, ticketPrice, "Funds should stay in escrow");
+
+        vm.warp(block.timestamp + 2 days);
+        vm.prank(organizer);
+        eventContract.distributeFunds();
 
         uint256 a1After = artist1.balance;
         uint256 a2After = artist2.balance;
@@ -89,11 +96,12 @@ contract EventTest is Test {
         assertEq(a2After - a2Before, (ticketPrice * 30) / 100, "Artist2 should get 30%");
         assertEq(a3After - a3Before, (ticketPrice * 20) / 100, "Artist3 should get 20%");
         assertEq(orgAfter - orgBefore, (ticketPrice * 10) / 100, "Organizer should get 10%");
+        assertEq(address(eventContract).balance, 0, "Escrow should be empty after distribution");
     }
 
     function testCheckInOnceOnly() public {
         vm.prank(buyer);
-        eventContract.buyTicket{value: ticketPrice}(1);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
 
         // Only organizer can check in
         vm.expectRevert("Not a verificator");
@@ -113,15 +121,15 @@ contract EventTest is Test {
 
     function testCannotExceedTotalTickets() public {
         vm.prank(buyer);
-        eventContract.buyTicket{value: ticketPrice}(1);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
 
         vm.prank(buyer);
-        eventContract.buyTicket{value: ticketPrice}(1);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
 
         // All tickets sold out
         vm.expectRevert("Not enough tickets available");
         vm.prank(buyer);
-        eventContract.buyTicket{value: ticketPrice}(1);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
     }
 
     function testConstructorRevertsOnMismatchedArtistArrays() public {
@@ -143,7 +151,9 @@ contract EventTest is Test {
             ticketPrice,
             totalTickets,
             address(ticketContract),
-            address(orgContract)
+            address(orgContract),
+            false,
+            false
         );
     }
 
@@ -166,7 +176,9 @@ contract EventTest is Test {
             ticketPrice,
             totalTickets,
             address(ticketContract),
-            address(orgContract)
+            address(orgContract),
+            false,
+            false
         );
     }
 
@@ -189,7 +201,9 @@ contract EventTest is Test {
             ticketPrice,
             totalTickets,
             address(ticketContract),
-            address(orgContract)
+            address(orgContract),
+            false,
+            false
         );
     }
 
@@ -205,19 +219,21 @@ contract EventTest is Test {
             ticketPrice,
             totalTickets,
             address(ticketContract),
-            address(organizatorContract)
+            address(organizatorContract),
+            false,
+            false
         );
         vm.deal(buyer, 10 ether);
         vm.prank(buyer);
         vm.expectRevert("Event already happened");
-        pastEvent.buyTicket{value: ticketPrice}(1);
+        pastEvent.buyTicket{value: ticketPrice}(1, false);
     }
 
     function testBuyTicketRevertsIfIncorrectETHSent() public {
         vm.deal(buyer, 10 ether);
         vm.prank(buyer);
         vm.expectRevert("Incorrect ETH sent");
-        eventContract.buyTicket{value: ticketPrice - 1}(1);
+        eventContract.buyTicket{value: ticketPrice - 1}(1, false);
     }
 
     function testOnlyOrganizerCanAddRemoveVerificator() public {
@@ -242,7 +258,7 @@ contract EventTest is Test {
 
     function testCheckInRevertsIfNotVerificator() public {
         vm.prank(buyer);
-        eventContract.buyTicket{value: ticketPrice}(1);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
         vm.prank(buyer);
         vm.expectRevert("Not a verificator");
         eventContract.checkIn(1);
@@ -250,7 +266,7 @@ contract EventTest is Test {
 
     function testCheckInRevertsIfAlreadyUsed() public {
         vm.prank(buyer);
-        eventContract.buyTicket{value: ticketPrice}(1);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
         vm.prank(organizer);
         eventContract.checkIn(1);
         vm.prank(organizer);
@@ -266,7 +282,7 @@ contract EventTest is Test {
 
     function testIsValidReturnsCorrectStatus() public {
         vm.prank(buyer);
-        eventContract.buyTicket{value: ticketPrice}(1);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
         assertTrue(eventContract.isValid(1), "Ticket should be valid before check-in");
         vm.prank(organizer);
         eventContract.checkIn(1);
@@ -279,5 +295,81 @@ contract EventTest is Test {
         for (uint256 i = 0; i < ids.length; i++) {
             assertEq(ids[i], artistIds[i], "Artist ID should match");
         }
+    }
+
+    function testCashOnlyEventAcceptsZeroPayment() public {
+        (Event cashEvent, ) = _deployEventWithConfig(true, false, block.timestamp + 1 days);
+
+        vm.prank(buyer);
+        cashEvent.buyTicket{value: 0}(1, false);
+        assertEq(cashEvent.soldTickets(), 1, "Ticket count should increase");
+
+        vm.prank(buyer);
+        vm.expectRevert("Cash events do not accept ETH");
+        cashEvent.buyTicket{value: ticketPrice}(1, false);
+    }
+
+    function testConsentChoiceRecorded() public {
+        (Event consentEvent, ) = _deployEventWithConfig(false, true, block.timestamp + 1 days);
+
+        vm.prank(buyer);
+        consentEvent.buyTicket{value: ticketPrice}(1, true);
+
+        assertEq(uint8(consentEvent.ticketConsent(1)), uint8(Event.ConsentStatus.Yes), "Consent should be recorded");
+    }
+
+    function testRequestRefundBurnsTicketAndRefunds() public {
+        vm.prank(buyer);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
+
+        uint256 buyerBefore = buyer.balance;
+
+        vm.prank(buyer);
+        eventContract.requestRefund(1);
+
+        assertEq(buyer.balance, buyerBefore + ticketPrice, "Buyer should receive refund");
+        assertEq(ticketContract.balanceOf(buyer), 0, "Ticket should be burned");
+        assertFalse(eventContract.isValid(1), "Refunded ticket should be invalid");
+    }
+
+    function testCannotRefundAfterEventDate() public {
+        vm.prank(buyer);
+        eventContract.buyTicket{value: ticketPrice}(1, false);
+
+        vm.warp(block.timestamp + 2 days);
+        vm.prank(buyer);
+        vm.expectRevert("Event already happened");
+        eventContract.requestRefund(1);
+    }
+
+    function testCashOnlyRefundNotAvailable() public {
+        (Event cashEvent, ) = _deployEventWithConfig(true, false, block.timestamp + 1 days);
+
+        vm.prank(buyer);
+        cashEvent.buyTicket{value: 0}(1, false);
+
+        vm.prank(buyer);
+        vm.expectRevert("Cash refunds unavailable");
+        cashEvent.requestRefund(1);
+    }
+
+    function _deployEventWithConfig(bool cashFlag, bool consentFlag, uint256 eventTimestamp) internal returns (Event newEvent, Ticket newTicket) {
+        Ticket tempTicket = new Ticket(address(this));
+        newEvent = new Event(
+            address(artistContract),
+            artistIds,
+            artistShares,
+            organizer,
+            eventTimestamp,
+            "ipfs://metadata",
+            ticketPrice,
+            totalTickets,
+            address(tempTicket),
+            address(organizatorContract),
+            cashFlag,
+            consentFlag
+        );
+        tempTicket.transferOwnership(address(newEvent));
+        newTicket = tempTicket;
     }
 }
