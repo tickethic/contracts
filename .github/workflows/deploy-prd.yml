@@ -30,7 +30,6 @@ jobs:
       - name: Deploy addresses to specified network in .env file
         env:
           HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
-          RPC_URL: ${{ vars.RPC_URL }}
           AMOY_RPC_URL: ${{ vars.AMOY_RPC_URL }}
           AMOY_PRIVATE_KEY: ${{ secrets.AMOY_PRIVATE_KEY }}
         run: npm run deploy:amoy
