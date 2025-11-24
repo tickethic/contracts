@@ -54,11 +54,11 @@ npx hardhat test solidity
 
 ### Deployment (Ignition)
 
-All contracts can be deployed with the Ignition module `ignition/modules/TickethicWithEventManager.ts`.
+All contracts can be deployed with the Ignition module `ignition/modules`.
 
 ```bash
 # Example for Polygon Amoy (make sure RPC_URL / PRIVATE_KEY envs are set)
-npm run deploy:eventmanager
+npm run deploy:amoy
 ```
 
 The module exposes parameters (organizer, artistIds, shares, ticket info, consent flags, etc.) via `m.getParameter(...)`, so you can supply real values without editing the file.
@@ -68,7 +68,8 @@ The module exposes parameters (organizer, artistIds, shares, ticket info, consen
 ```bash
 npm run test              # Run all Hardhat tests
 npm run compile           # Compile contracts with Hardhat
-npm run deploy:eventmanager  # Deploy full stack via Ignition (Amoy by default)
+npm run deploy:amoy       # Deploy full stack via Ignition to Amoy (dev)
+npm run deploy:polygon    # Deploy full stack via Ignition to Polygon (prd)
 ```
 
 ## Contract Architecture

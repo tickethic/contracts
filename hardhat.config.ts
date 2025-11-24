@@ -42,6 +42,15 @@ const config: HardhatUserConfig = {
       gas: 30000000,
       gasPrice: 1000000000,
     },
+    polygon: {
+      type: "http",
+      chainType: "l2",
+      url: process.env.POLYGON_MAINNET_RPC_URL || "https://polygon-rpc.com",
+      accounts: process.env.POLYGON_PRIVATE_KEY ? [process.env.POLYGON_PRIVATE_KEY] : [],
+      chainId: 137,
+      gas: 30000000,
+      gasPrice: 30000000000,
+    },
   },
 };
 
