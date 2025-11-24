@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { readFileSync } from "fs";
 
 const githubToken = process.env.GITHUB_PAT_TICKETHIC;
@@ -6,7 +5,6 @@ const repoOwner = "tickethic";
 const repoName = "tickethic";
 const envName = "dev";
 
-// Charge les adresses
 const addresses = JSON.parse(readFileSync("dist/contract-addresses.json", "utf-8"));
 
 const variablesToUpdate = {
