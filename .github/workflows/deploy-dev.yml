@@ -28,6 +28,12 @@ jobs:
       - name: Clean workspace
         run: rm -rf ignition/deployments || true
 
+        - name: Vérifier variables d'environnement
+        run: |
+          echo "RPC_URL = $RPC_URL"
+          if [ -z "$RPC_URL" ]; then echo "RPC_URL non défini !"; exit 1; else echo "RPC_URL OK"; fi
+          if [ -z "$PRIVATE_KEY" ]; then echo "PRIVATE_KEY non défini !"; exit 1; else echo "PRIVATE_KEY OK"; fi
+
       - name: Deploy addresses to specified network in .env file
         env:
           HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
