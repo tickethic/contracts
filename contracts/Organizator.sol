@@ -17,7 +17,7 @@ contract Organizator is Ownable {
         }
     }
 
-    function addOrganizator(address organizator) external {
+    function addOrganizator(address organizator) external onlyOwner {
         isOrganizator[organizator] = true;
         emit OrganizatorAdded(organizator);
     }
@@ -27,9 +27,6 @@ contract Organizator is Ownable {
         emit OrganizatorRemoved(organizator);
     }
 
-    /**
-     * @dev Allow anyone to register themselves as an organizer
-     */
     function registerAsOrganizer() external {
         require(!isOrganizator[msg.sender], "Already registered as organizer");
         isOrganizator[msg.sender] = true;
