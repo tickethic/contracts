@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-const githubToken = process.env.GITHUB_PAT_TICKETHIC;
+const githubToken = process.env.PAT_TICKETHIC;
 const repoOwner = "tickethic";
 const repoName = "tickethic";
 const envName = "dev";

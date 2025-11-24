@@ -36,8 +36,11 @@ jobs:
           RPC_URL: ${{ vars.RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: npm run deploy:amoy
+      
+      - name: Liste les fichiers dist
+        run: ls -la dist
 
       - name: Update environment variables
         env:
-          GITHUB_PAT_TICKETHIC: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TICKETHIC: ${{ secrets.PAT_TICKETHIC }}
         run: node scripts/updateEnv.js
