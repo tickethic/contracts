@@ -16,8 +16,11 @@ This project includes:
 ## Features
 
 - ✅ Event creation and management
-- ✅ Ticket sales with ETH payments
-- ✅ Automatic revenue distribution between artists and organizer
+- ✅ Ticket sales with ETH escrowed until post-event distribution
+- ✅ Optional **cash-only** events (no on-chain payment required)
+- ✅ Configurable filming consent flow per ticket
+- ✅ Ticket holder cancellations with automatic refunds to original wallet
+- ✅ Automatic revenue distribution between artists and organizer once the event closes
 - ✅ Ticket verification system
 - ✅ Organizer and verifier management
 - ✅ Comprehensive tests (14 passing tests)
@@ -49,33 +52,23 @@ npx hardhat test solidity
 
 ## Deployment
 
-### Local Deployment
-Start a local Hardhat node and deploy the contracts:
-```bash
-npx hardhat node
-```
-```bash
-npx hardhat ignition deploy ignition/modules/Tickethic.ts --network localhost
-```
+### Deployment (Ignition)
 
-### Deployment on Amoy (Polygon testnet)
+All contracts can be deployed with the Ignition module `ignition/modules/TickethicWithEventManager.ts`.
 
 ```bash
-# Configure environment variables
-export AMOY_RPC_URL="your_rpc_url"
-export AMOY_PRIVATE_KEY="your_private_key"
-
-# Deploy
-npx hardhat ignition deploy ignition/modules/Tickethic.ts --network amoy
+# Example for Polygon Amoy (make sure RPC_URL / PRIVATE_KEY envs are set)
+npm run deploy:eventmanager
 ```
+
+The module exposes parameters (organizer, artistIds, shares, ticket info, consent flags, etc.) via `m.getParameter(...)`, so you can supply real values without editing the file.
 
 ## Available Scripts
 
 ```bash
-npm run test          # Run all tests
-npm run compile       # Compile contracts
-npm run deploy:local  # Deploy locally
-npm run deploy:amoy   # Deploy on Amoy
+npm run test              # Run all Hardhat tests
+npm run compile           # Compile contracts with Hardhat
+npm run deploy:eventmanager  # Deploy full stack via Ignition (Amoy by default)
 ```
 
 ## Contract Architecture
@@ -83,8 +76,11 @@ npm run deploy:amoy   # Deploy on Amoy
 ### Event.sol
 The main contract that manages:
 - Event creation
-- Ticket sales
-- Payment distribution
+- Ticket sales (with escrow for on-chain payments)
+- Cash-only mode for offline payments
+- Ticketholder filming consent
+- Refund / cancellation requests
+- Post-event payment distribution
 - Verification system
 
 ### Artist.sol

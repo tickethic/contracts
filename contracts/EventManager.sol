@@ -47,7 +47,9 @@ contract EventManager {
         uint256 _date,
         string memory _metadataUri,
         uint256 _ticketPrice,
-        uint256 _totalTickets
+        uint256 _totalTickets,
+        bool _cashOnly,
+        bool _requiresConsent
     ) external returns (uint256 eventId, address eventAddress) {
         // Validate inputs
         require(_artistIds.length > 0, "At least one artist required");
@@ -55,7 +57,7 @@ contract EventManager {
         require(_organizer != address(0), "Invalid organizer address");
         require(_date > block.timestamp, "Event date must be in the future");
         require(bytes(_metadataUri).length > 0, "Metadata URI required");
-        require(_ticketPrice > 0, "Ticket price must be greater than 0");
+        require(_ticketPrice > 0 || _cashOnly, "Ticket price required unless cash only");
         require(_totalTickets > 0, "Total tickets must be greater than 0");
         
         // Validate artist shares
@@ -91,7 +93,9 @@ contract EventManager {
             _ticketPrice,
             _totalTickets,
             address(newTicketContract),
-            address(organizatorContract)
+            address(organizatorContract),
+            _cashOnly,
+            _requiresConsent
         );
         
         // Transfer ownership of the new ticket contract to the event
