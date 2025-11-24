@@ -10,6 +10,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: prd
     permissions:
       contents: read
       packages: write
@@ -25,14 +26,14 @@ jobs:
         run: npm install
 
       - name: Clean workspace
-        run: rm -rf ignition/deployments
+        run: rm -rf ignition/deployments || true
 
       - name: Deploy addresses to specified network in .env file
         env:
           HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
           RPC_URL: ${{ vars.POLYGON_MAINNET_RPC_URL }}
           PRIVATE_KEY: ${{ secrets.POLYGON_PRIVATE_KEY }}
-        run: npm run deploy:amoy
+        run: npm run deploy:polygon
 
       - name: Publish to GitHub Packages
         run: npm publish

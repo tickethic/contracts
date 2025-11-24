@@ -16,8 +16,8 @@
   "scripts": {
     "test": "npx hardhat test",
     "compile": "hardhat compile",
-    "deploy:amoy": "npx hardhat ignition deploy ignition/modules/amoy.ts --network amoy",
-    "deploy:polygon": "npx hardhat ignition deploy ignition/modules/polygon.ts --network polygon"
+    "deploy:amoy": "npx hardhat ignition deploy ignition/modules/deploy.ts --network amoy",
+    "deploy:polygon": "npx hardhat ignition deploy ignition/modules/deploy.ts --network polygon"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.3",

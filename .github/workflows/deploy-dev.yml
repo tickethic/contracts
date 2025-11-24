@@ -10,6 +10,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: dev
     permissions:
       contents: read
       packages: write
@@ -25,7 +26,7 @@ jobs:
         run: npm install
 
       - name: Clean workspace
-        run: rm -rf ignition/deployments
+        run: rm -rf ignition/deployments || true
 
       - name: Deploy addresses to specified network in .env file
         env:
