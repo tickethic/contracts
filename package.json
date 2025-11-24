@@ -16,7 +16,7 @@
   "scripts": {
     "test": "npx hardhat test",
     "compile": "hardhat compile",
-    "deploy:eventmanager": "npx hardhat ignition deploy ignition/deploy.ts --network amoy"
+    "deploy:amoy": "npx hardhat ignition deploy ignition/modules/amoy.ts --network amoy"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.3",
