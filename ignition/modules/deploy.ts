@@ -3,50 +3,25 @@ import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 const TickethicWithEventManagerModule = buildModule("TickethicWithEventManagerModule", (m) => {
   const deployer = m.getAccount(0);
 
-  // Deploy Artist contract
+  // Déploye le contrat Artist
   const artist = m.contract("Artist");
 
-  // Deploy Ticket contract with deployer as initial owner
+  // Déploie le contrat Ticket avec le deployer comme propriétaire initial
   const ticket = m.contract("Ticket", [deployer]);
 
-  // Organizer and configuration parameters
+  // Récupère les paramètres d’organisateur et d'organisateurs initiaux
   const organizer = m.getParameter("organizer", deployer);
   const initialOrganizers = m.getParameter("initialOrganizers", [organizer]);
-  const artistIds = m.getParameter<number[]>("artistIds");
-  const artistShares = m.getParameter<number[]>("artistShares");
-  const eventDate = m.getParameter<number>("eventDate");
-  const metadataURI = m.getParameter<string>("metadataURI");
-  const ticketPrice = m.getParameter<bigint>("ticketPrice");
-  const totalTickets = m.getParameter<number>("totalTickets");
-  const cashOnly = m.getParameter<boolean>("cashOnly", false);
-  const requiresConsent = m.getParameter<boolean>("requiresConsent", false);
 
-  // Deploy Organizator contract with configurable initial organizers
+  // Déploie le contrat Organizator avec paramètres
   const organizator = m.contract("Organizator", [organizer, initialOrganizers]);
 
-  const event = m.contract("Event", [
-    artist,
-    artistIds,
-    artistShares,
-    organizer,
-    eventDate,
-    metadataURI,
-    ticketPrice,
-    totalTickets,
-    ticket,
-    organizator,
-    cashOnly,
-    requiresConsent,
-  ]);
+  // Déploie le contrat EventManager, qui gérera la création dynamique des events
+  const eventManager = m.contract("EventManager", [artist, ticket, organizator]);
 
-  // Deploy EventManager
-  const eventManager = m.contract("EventManager", [
-    artist,
-    ticket,
-    organizator
-  ]);
+  // Seuls ces contrats sont déployés ici, le contrat Event sera créé dynamiquement par EventManager
 
-  return { artist, ticket, organizator, event, eventManager };
+  return { artist, ticket, organizator, eventManager };
 });
 
 export default TickethicWithEventManagerModule;
