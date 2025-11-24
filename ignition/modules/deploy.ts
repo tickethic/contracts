@@ -1,4 +1,5 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
+import fs from "fs";
 
 const TickethicWithEventManagerModule = buildModule("TickethicWithEventManagerModule", (m) => {
   // Deploy Artist contract
@@ -42,4 +43,26 @@ const TickethicWithEventManagerModule = buildModule("TickethicWithEventManagerMo
   return { artist, ticket, organizator, event, eventManager };
 });
 
-export default TickethicWithEventManagerModule;
+// Fonction extérieure pour écrire les adresses après déploiement
+async function writeAddresses(deployedContracts: any) {
+  const distDir = "dist";
+  if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir);
+  }
+
+  const addresses = {
+    artist: deployedContracts.artist.address,
+    ticket: deployedContracts.ticket.address,
+    organizator: deployedContracts.organizator.address,
+    eventManager: deployedContracts.eventManager.address,
+  };
+
+  fs.writeFileSync(`${distDir}/contract-addresses.json`, JSON.stringify(addresses, null, 2));
+}
+
+// Override de la fonction default export pour y insérer l’écriture d’adresses
+export default async function (m: any) {
+  const deployed = await TickethicWithEventManagerModule(m);
+  await writeAddresses(deployed);
+  return deployed;
+}
