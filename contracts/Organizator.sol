@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Organizator is Ownable {
     mapping(address => bool) public isOrganizator;
@@ -27,6 +27,9 @@ contract Organizator is Ownable {
         emit OrganizatorRemoved(organizator);
     }
 
+    /**
+     * @dev Allow anyone to register themselves as an organizer
+     */
     function registerAsOrganizer() external {
         require(!isOrganizator[msg.sender], "Already registered as organizer");
         isOrganizator[msg.sender] = true;
