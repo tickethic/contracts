@@ -15,4 +15,8 @@ contract Ticket is ERC721URIStorage, Ownable {
         _setTokenURI(tokenId, metadataUri);
         return tokenId;
     }
+
+    function burnTicket(uint256 tokenId) external onlyOwner {
+        _burn(tokenId);
+    }
 }
