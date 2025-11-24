@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Clean workspace
+        run: rm -rf ignition/deployments
+
       - name: Prepare env file
         run: |
           cat <<'EOF' > .env
