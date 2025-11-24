@@ -36,8 +36,8 @@ const config: HardhatUserConfig = {
     amoy: {
       type: "http",
       chainType: "l1",
-      url: process.env.AMOY_RPC_URL || "",
-      accounts: process.env.AMOY_PRIVATE_KEY ? [process.env.AMOY_PRIVATE_KEY] : [],
+      url: process.env.RPC_URL || "",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 80002,
       gas: 30000000,
       gasPrice: 1000000000,
@@ -45,8 +45,8 @@ const config: HardhatUserConfig = {
     polygon: {
       type: "http",
       chainType: "l2",
-      url: process.env.POLYGON_MAINNET_RPC_URL || "https://polygon-rpc.com",
-      accounts: process.env.POLYGON_PRIVATE_KEY ? [process.env.POLYGON_PRIVATE_KEY] : [],
+      url: process.env.MAINNET_RPC_URL || "https://polygon-rpc.com",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 137,
       gas: 30000000,
       gasPrice: 30000000000,
