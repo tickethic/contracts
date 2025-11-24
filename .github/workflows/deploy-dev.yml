@@ -36,3 +36,8 @@ jobs:
           RPC_URL: ${{ vars.RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: npm run deploy:amoy
+
+      - name: Update environment variables
+        env:
+          GITHUB_PAT_TICKETHIC: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/updateEnv.js
