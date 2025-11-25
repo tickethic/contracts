@@ -40,35 +40,4 @@ jobs:
       - name: Update environment variables
         env:
           GH_TOKEN: ${{ secrets.PAT_TICKETHIC }}
-          REPO_OWNER: tickethic
-          REPO_NAME: tickethic
-          ENV_NAME: dev
-        run: |
-          echo "$GH_TOKEN" | gh auth login --with-token
-
-          ADDRESS_FILE=dist/contract-addresses.json
-          if [ ! -f "$ADDRESS_FILE" ]; then
-            echo "File $ADDRESS_FILE not found"
-            exit 1
-          fi
-
-          EVENT_MANAGER=$(jq -r '.eventManager' <$ADDRESS_FILE)
-          EVENT=$(jq -r '.event // ""' <$ADDRESS_FILE)
-          TICKET=$(jq -r '.ticket' <$ADDRESS_FILE)
-          ORGANIZATOR=$(jq -r '.organizator' <$ADDRESS_FILE)
-          ARTIST=$(jq -r '.artist' <$ADDRESS_FILE)
-
-          declare -A vars=(
-            [NEXT_PUBLIC_EVENT_MANAGER_CONTRACT]=$EVENT_MANAGER
-            [NEXT_PUBLIC_EVENT_CONTRACT]=$EVENT
-            [NEXT_PUBLIC_TICKET_CONTRACT]=$TICKET
-            [NEXT_PUBLIC_ORGANIZATOR_CONTRACT]=$ORGANIZATOR
-            [NEXT_PUBLIC_ARTIST_CONTRACT]=$ARTIST
-          )
-
-          for var in "${!vars[@]}"; do
-            echo "Updating $var=${vars[$var]}"
-            gh api --method PATCH -H "Accept: application/vnd.github+json" \
-              /repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var \
-              -f value="${vars[$var]}"
-          done
+        run: node scripts/updateEnv.js
