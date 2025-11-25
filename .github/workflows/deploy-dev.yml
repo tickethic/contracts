@@ -39,5 +39,5 @@ jobs:
 
       - name: Update environment variables
         env:
-          GH_TOKEN: ${{ secrets.PAT_TICKETHIC }}
+          PAT_TICKETHIC: ${{ secrets.PAT_TICKETHIC }}
         run: node scripts/updateEnv.js
