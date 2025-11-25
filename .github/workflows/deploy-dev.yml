@@ -48,6 +48,9 @@ jobs:
           if [ ! -f "$ADDRESS_FILE" ]; then
             echo "File $ADDRESS_FILE not found"
             exit 1
+          else
+            echo "Contenu de $ADDRESS_FILE :"
+            cat "$ADDRESS_FILE"
           fi
 
           EVENT_MANAGER=$(jq -r '.eventManager' <$ADDRESS_FILE)
