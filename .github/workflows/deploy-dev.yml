@@ -66,9 +66,9 @@ jobs:
                 continue
               fi
               echo "Updating $var to $value"
-              echo "curl -X PATCH -H 'Accept: application/vnd.github+json' https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var -d '{\"value\":\"$value\"}'"
+              echo "curl -X PATCH -H 'Accept: application/vnd.github+json' /repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var -d '{\"value\":\"$value\"}'"
               gh api --method PATCH -H "Accept: application/vnd.github+json" \
-                https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var \
+                /repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var \
                 -f value="$value"
             done
 
