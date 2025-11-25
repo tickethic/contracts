@@ -1,5 +1,4 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
-import fs from "fs";
 
 const TickethicWithEventManagerModule = buildModule("TickethicWithEventManagerModule", (m) => {
   // Deploy Artist contract
@@ -39,21 +38,6 @@ const TickethicWithEventManagerModule = buildModule("TickethicWithEventManagerMo
     ticket,
     organizator
   ]);
-
-   // Créer le dossier dist si absent
-  if (!fs.existsSync("dist")) {
-    fs.mkdirSync("dist");
-  }
-
-  // Sauvegarder les adresses déployées
-  const addresses = {
-    artist: artist.address,
-    ticket: ticket.address,
-    organizator: organizator.address,
-    eventManager: eventManager.address,
-  };
-
-  fs.writeFileSync("dist/contract-addresses.json", JSON.stringify(addresses, null, 2));
 
   return { artist, ticket, organizator, event, eventManager };
 });

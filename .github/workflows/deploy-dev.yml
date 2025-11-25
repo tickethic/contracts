@@ -37,40 +37,32 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: npm run deploy:amoy
 
-      - name: Update environment variables
+      - name: Update environment variables from deploy logs
         env:
           GH_TOKEN: ${{ secrets.PAT_TICKETHIC }}
           REPO_OWNER: tickethic
           REPO_NAME: tickethic
           ENV_NAME: dev
         run: |
-          ADDRESS_FILE=dist/contract-addresses.json
-          if [ ! -f "$ADDRESS_FILE" ]; then
-            echo "File $ADDRESS_FILE not found"
-            exit 1
-          else
-            echo "Contenu de $ADDRESS_FILE :"
-            cat "$ADDRESS_FILE"
-          fi
-
-          EVENT_MANAGER=$(jq -r '.eventManager' <$ADDRESS_FILE)
-          EVENT=$(jq -r '.event // ""' <$ADDRESS_FILE)
-          TICKET=$(jq -r '.ticket' <$ADDRESS_FILE)
-          ORGANIZATOR=$(jq -r '.organizator' <$ADDRESS_FILE)
-          ARTIST=$(jq -r '.artist' <$ADDRESS_FILE)
-
           declare -A vars=(
-            [NEXT_PUBLIC_EVENT_MANAGER_CONTRACT]=$EVENT_MANAGER
-            [NEXT_PUBLIC_EVENT_CONTRACT]=$EVENT
-            [NEXT_PUBLIC_TICKET_CONTRACT]=$TICKET
-            [NEXT_PUBLIC_ORGANIZATOR_CONTRACT]=$ORGANIZATOR
-            [NEXT_PUBLIC_ARTIST_CONTRACT]=$ARTIST
+            [NEXT_PUBLIC_ARTIST_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Artist - ' deploy.log | awk '{print $NF}')"
+            [NEXT_PUBLIC_ORGANIZATOR_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Organizator - ' deploy.log | awk '{print $NF}')"
+            [NEXT_PUBLIC_TICKET_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Ticket - ' deploy.log | awk '{print $NF}')"
+            [NEXT_PUBLIC_EVENT_MANAGER_CONTRACT]="$(grep 'TickethicWithEventManagerModule#EventManager - ' deploy.log | awk '{print $NF}')"
+            [NEXT_PUBLIC_EVENT_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Event - ' deploy.log | awk '{print $NF}')"
           )
-
+            
+          echo "Updating environment variables for $ENV_NAME in $REPO_OWNER/$REPO_NAME"
+          
           for var in "${!vars[@]}"; do
-            echo "Updating $var=${vars[$var]}"
+            value="${vars[$var]}"
+            if [ -z "$value" ]; then
+              echo "Skip $var update because value is empty"
+              continue
+            fi
+            echo "Updating $var to $value"
             gh api --method PATCH -H "Accept: application/vnd.github+json" \
               /repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var \
-              -f value="${vars[$var]}"
+              -f value="$value"
           done
 
