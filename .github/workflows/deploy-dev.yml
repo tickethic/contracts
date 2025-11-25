@@ -35,7 +35,7 @@ jobs:
           HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
           RPC_URL: ${{ vars.RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        run: npm run deploy:amoy
+        run: npm run deploy:amoy | tee deploy.log
 
       - name: Update environment variables from deploy logs
         env:
@@ -44,25 +44,30 @@ jobs:
           REPO_NAME: tickethic
           ENV_NAME: dev
         run: |
-          declare -A vars=(
-            [NEXT_PUBLIC_ARTIST_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Artist - ' deploy.log | awk '{print $NF}')"
-            [NEXT_PUBLIC_ORGANIZATOR_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Organizator - ' deploy.log | awk '{print $NF}')"
-            [NEXT_PUBLIC_TICKET_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Ticket - ' deploy.log | awk '{print $NF}')"
-            [NEXT_PUBLIC_EVENT_MANAGER_CONTRACT]="$(grep 'TickethicWithEventManagerModule#EventManager - ' deploy.log | awk '{print $NF}')"
-            [NEXT_PUBLIC_EVENT_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Event - ' deploy.log | awk '{print $NF}')"
-          )
-            
-          echo "Updating environment variables for $ENV_NAME in $REPO_OWNER/$REPO_NAME"
-          
-          for var in "${!vars[@]}"; do
-            value="${vars[$var]}"
-            if [ -z "$value" ]; then
-              echo "Skip $var update because value is empty"
-              continue
+            if [ ! -f deploy.log ]; then
+              echo "File deploy.log not found"
+              exit 1
             fi
-            echo "Updating $var to $value"
-            gh api --method PATCH -H "Accept: application/vnd.github+json" \
-              /repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var \
-              -f value="$value"
-          done
+
+            declare -A vars=(
+              [NEXT_PUBLIC_ARTIST_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Artist - ' deploy.log | awk '{print $NF}')"
+              [NEXT_PUBLIC_ORGANIZATOR_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Organizator - ' deploy.log | awk '{print $NF}')"
+              [NEXT_PUBLIC_TICKET_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Ticket - ' deploy.log | awk '{print $NF}')"
+              [NEXT_PUBLIC_EVENT_MANAGER_CONTRACT]="$(grep 'TickethicWithEventManagerModule#EventManager - ' deploy.log | awk '{print $NF}')"
+              [NEXT_PUBLIC_EVENT_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Event - ' deploy.log | awk '{print $NF}')"
+            )
+
+            echo "Updating environment variables for $ENV_NAME in $REPO_OWNER/$REPO_NAME"
+
+            for var in "${!vars[@]}"; do
+              value="${vars[$var]}"
+              if [ -z "$value" ]; then
+                echo "Skip $var update because value is empty"
+                continue
+              fi
+              echo "Updating $var to $value"
+              gh api --method PATCH -H "Accept: application/vnd.github+json" \
+                /repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var \
+                -f value="$value"
+            done
 
