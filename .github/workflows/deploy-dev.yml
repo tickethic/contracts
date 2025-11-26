@@ -82,7 +82,7 @@ jobs:
         run: |
           VAR_ID=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
             "https://api.vercel.com/v9/projects/$PROJECT_ID/env" | \
-            jq -r --arg key "$VAR_NAME" '.env // [] | map(select(.key == $key)) | .[0].id // empty')
+            jq -r --arg key "$VAR_NAME" --arg env "$VAR_ENV" '.env // [] | map(select(.key == $key and (.target | index($env) != null))) | .[0].id // empty')
 
           echo "VAR_ID = $VAR_ID"
 
