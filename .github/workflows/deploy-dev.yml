@@ -71,6 +71,36 @@ jobs:
                 /repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var \
                 -f value="$value"
             done
+      
+      - name: Update Vercel env variable
+        env:
+          VERCEL_TOKEN: ${{ secrets.PAT_VERCEL }}
+          PROJECT_ID: "prj_KZZdxxzxFe8Pfe4YWBuHdifH06WM"
+          VAR_NAME: "EVM"
+          VAR_VALUE: "TEST"  # Valeur de la variable à appliquer
+          VAR_ENV: "previer"                # Cible: production / preview / development
+        run: |
+          # Récupération de l’ID de la variable existante
+          VAR_ID=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v9/projects/$PROJECT_ID/env" | \
+            jq -r --arg name "$VAR_NAME" '.env | map(select(.key==$name)) | .[0].id // empty')
+
+          if [ -z "$VAR_ID" ]; then
+            echo "Variable $VAR_NAME non trouvée, création en cours..."
+            curl -X POST -H "Authorization: Bearer $VERCEL_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{\"key\":\"$VAR_NAME\",\"value\":\"$VAR_VALUE\",\"target\":[\"$VAR_ENV\"]}" \
+              "https://api.vercel.com/v9/projects/$PROJECT_ID/env"
+            echo "Variable $VAR_NAME créée."
+          else
+            echo "Variable $VAR_NAME trouvée (id: $VAR_ID), mise à jour en cours..."
+            curl -X PATCH -H "Authorization: Bearer $VERCEL_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{\"value\":\"$VAR_VALUE\",\"target\":[\"$VAR_ENV\"]}" \
+              "https://api.vercel.com/v9/projects/$PROJECT_ID/env/$VAR_ID"
+            echo "Variable $VAR_NAME mise à jour."
+          fi
+
       - name: Trigger Vercel deployment
         env:
           VERCEL_TOKEN: ${{ secrets.PAT_VERCEL }}
