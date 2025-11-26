@@ -114,7 +114,7 @@ jobs:
               "gitSource": {
                 "type": "github",
                 "repoId": 1050232355, 
-                "ref": "main"
+                "ref": "develop"
               }
             }'
 
