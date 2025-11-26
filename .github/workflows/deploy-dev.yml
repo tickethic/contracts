@@ -41,7 +41,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAT_TICKETHIC }}
           REPO_OWNER: tickethic
-          REPO_NAME: tickethic
+          REPO_NAME: dapp
           ENV_NAME: dev
         run: |
             if [ ! -f deploy.log ]; then
