@@ -71,4 +71,20 @@ jobs:
                 /repos/$REPO_OWNER/$REPO_NAME/environments/$ENV_NAME/variables/$var \
                 -f value="$value"
             done
+      - name: Trigger Vercel deployment
+        env:
+          VERCEL_TOKEN: ${{ secrets.PAT_VERCEL }}
+        run: |
+          curl -X POST https://api.vercel.com/v13/deployments \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "tickethic", 
+              "gitSource": {
+                "type": "github",
+                "repoId": 1050232355, 
+                "ref": "main"
+              }
+            }'
+
 
