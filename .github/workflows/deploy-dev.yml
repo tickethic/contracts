@@ -81,8 +81,8 @@ jobs:
           VAR_ENV: "preview"
         run: |
           VAR_ID=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
-            "https://api.vercel.com/v9/projects/$PROJECT_ID/env" | \
-            jq -r --arg name "$VAR_NAME" '.env | map(select(.key==$name)) | .[0].id // empty')
+          "https://api.vercel.com/v9/projects/$PROJECT_ID/env" | \
+          jq -r --arg key "$VAR_NAME" '.env // [] | map(select(.key == $key)) | .[0].id // empty')
 
           if [ -z "$VAR_ID" ]; then
             echo "Variable $VAR_NAME not found, creating..."
