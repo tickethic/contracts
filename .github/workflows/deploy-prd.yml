@@ -33,7 +33,7 @@ jobs:
           HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
           RPC_URL: ${{ vars.RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        run: npm run deploy:polygon
+        run: npm run deploy:dynamic --network polygon
 
       - name: Publish to GitHub Packages
         run: npm publish

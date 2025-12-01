@@ -35,7 +35,7 @@ jobs:
           HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
           RPC_URL: ${{ vars.RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        run: npm run deploy:amoy | tee deploy.log
+        run: npm run deploy:dynamic --network amoy | tee deploy.log
 
       - name: Update environment variables from deploy logs
         env:
