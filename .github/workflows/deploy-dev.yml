@@ -23,9 +23,7 @@ jobs:
           scope: '@tickethic'
 
       - name: Install dependencies
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install
+        run: npm ci
 
       - name: Clean workspace
         run: rm -rf ignition/deployments || true
