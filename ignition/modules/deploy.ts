@@ -2,7 +2,7 @@ import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
 const TickethicModule = buildModule("Tickethic", (m) => {
   // Deploy tickethic contract
-  const tickethic = m.contract("Tickethic", [m.getAccount(0)]);
+  const tickethic = m.contract("Tickethic");
 
   return { tickethic };
 });
