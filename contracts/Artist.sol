@@ -5,47 +5,58 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Artist is ERC721URIStorage, Ownable {
-    uint256 public nextArtistId = 1;
+    uint256 public nextId = 1;
 
     struct ArtistInfo {
+        uint256 id;
         string name;
         string metadataURI;
     }
 
-    mapping(uint256 => ArtistInfo) public artistInfos;
-    mapping(address => bool) public hasMintedArtist;
+    mapping(address => ArtistInfo) public artistInfos;
+    address[] private artistAddresses;
 
     constructor() ERC721("Artist", "ARTIST") Ownable(msg.sender) {}
 
     function mintArtist(
+        address artistAddress,
         string memory artistName,
         string memory artistMetadataURI
     ) external returns (uint256) {
-        require(!hasMintedArtist[msg.sender], "Address has already minted an artist");
+        require(!hasAddressMintedArtist(artistAddress), "Address has already minted an artist");
         
-        uint256 artistId = nextArtistId++;
-        _safeMint(msg.sender, artistId);
-        _setTokenURI(artistId, artistMetadataURI);
-        artistInfos[artistId] = ArtistInfo(artistName, artistMetadataURI);
-        hasMintedArtist[msg.sender] = true;
+        uint256 id = nextId++;
+        _safeMint(artistAddress, id);
+        _setTokenURI(id, artistMetadataURI);
+        artistInfos[artistAddress] = ArtistInfo(id, artistName, artistMetadataURI);
+        artistAddresses.push(artistAddress);
         
-        return artistId;
+        return id;
     }
 
-    function getArtistInfo(uint256 artistId) external view returns (string memory name, string memory metadataURI) {
-        ArtistInfo storage info = artistInfos[artistId];
+    function getArtistInfo(address artistAddress) external view returns (string memory name, string memory metadataURI) {
+        ArtistInfo storage info = artistInfos[artistAddress];
         return (info.name, info.metadataURI);
     }
+
+
+    /**
+     * @dev Get all artist addresses that have been minted
+     * @return Array of all artist addresses
+     */
+    function getAllArtistAddresses() external view returns (address[] memory) {
+        return artistAddresses;
+    } 
 
     /**
      * @dev Get all artist IDs that have been minted
      * @return Array of all artist IDs
      */
     function getAllArtistIds() external view returns (uint256[] memory) {
-        uint256 totalArtists = nextArtistId - 1;
+        uint256 totalArtists = nextId - 1;
         uint256[] memory allArtists = new uint256[](totalArtists);
         
-        for (uint256 i = 1; i < nextArtistId; i++) {
+        for (uint256 i = 1; i < nextId; i++) {
             allArtists[i - 1] = i;
         }
         
@@ -53,34 +64,11 @@ contract Artist is ERC721URIStorage, Ownable {
     }
 
     /**
-     * @dev Get artist name by ID
-     * @param artistId The artist ID
-     * @return Artist name
-     */
-    function getArtistName(uint256 artistId) external view returns (string memory) {
-        require(artistId > 0 && artistId < nextArtistId, "Artist does not exist");
-        return artistInfos[artistId].name;
-    }
-
-    /**
      * @dev Get total number of artists minted
      * @return Total number of artists
      */
     function getTotalArtists() external view returns (uint256) {
-        return nextArtistId - 1;
-    }
-
-    /**
-     * @dev Get artist info by ID (name and owner address)
-     * @param artistId The artist ID
-     * @return name Artist name
-     * @return owner Artist owner address
-     * @return metadataURI Artist metadata URI
-     */
-    function getArtistDetails(uint256 artistId) external view returns (string memory name, address owner, string memory metadataURI) {
-        require(artistId > 0 && artistId < nextArtistId, "Artist does not exist");
-        ArtistInfo storage info = artistInfos[artistId];
-        return (info.name, ownerOf(artistId), info.metadataURI);
+        return nextId - 1;
     }
 
     /**
@@ -88,27 +76,8 @@ contract Artist is ERC721URIStorage, Ownable {
      * @param userAddress The address to check
      * @return True if the address has minted an artist, false otherwise
      */
-    function hasAddressMintedArtist(address userAddress) external view returns (bool) {
-        return hasMintedArtist[userAddress];
-    }
-
-    /**
-     * @dev Get the artist ID owned by a specific address (if any)
-     * @param userAddress The address to check
-     * @return artistId The artist ID owned by the address, or 0 if none
-     */
-    function getArtistIdByAddress(address userAddress) external view returns (uint256) {
-        if (!hasMintedArtist[userAddress]) {
-            return 0;
-        }
-        
-        // Find the artist ID owned by this address
-        for (uint256 i = 1; i < nextArtistId; i++) {
-            if (ownerOf(i) == userAddress) {
-                return i;
-            }
-        }
-        
-        return 0;
+    function hasAddressMintedArtist(address userAddress) internal view returns (bool) {
+        ArtistInfo storage info = artistInfos[userAddress];
+        return bytes(info.name).length != 0;
     }
 }
