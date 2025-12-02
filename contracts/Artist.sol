@@ -14,7 +14,7 @@ contract Artist is ERC721URIStorage, Ownable {
     }
 
     mapping(address => ArtistInfo) public artistInfos;
-    address[] private artistAddresses;
+    address[] public artistAddresses;
 
     constructor() ERC721("Artist", "ARTIST") Ownable(msg.sender) {}
 
@@ -23,7 +23,7 @@ contract Artist is ERC721URIStorage, Ownable {
         string memory artistName,
         string memory artistMetadataURI
     ) external returns (uint256) {
-        require(!hasAddressMintedArtist(artistAddress), "Address has already minted an artist");
+        require(!isArtist(artistAddress), "Address has already minted an artist");
         
         uint256 id = nextId++;
         _safeMint(artistAddress, id);
@@ -67,17 +67,17 @@ contract Artist is ERC721URIStorage, Ownable {
      * @dev Get total number of artists minted
      * @return Total number of artists
      */
-    function getTotalArtists() external view returns (uint256) {
+    function getTotal() external view returns (uint256) {
         return nextId - 1;
     }
 
     /**
      * @dev Check if an address has already minted an artist
-     * @param userAddress The address to check
+     * @param owner The address to check
      * @return True if the address has minted an artist, false otherwise
      */
-    function hasAddressMintedArtist(address userAddress) internal view returns (bool) {
-        ArtistInfo storage info = artistInfos[userAddress];
+    function isArtist(address owner) public view returns (bool) {
+        ArtistInfo storage info = artistInfos[owner];
         return bytes(info.name).length != 0;
     }
 }

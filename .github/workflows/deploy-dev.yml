@@ -48,11 +48,7 @@ jobs:
             fi
 
             declare -A vars=(
-              [NEXT_PUBLIC_ARTIST_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Artist - ' deploy.log | awk '{print $NF}')"
-              [NEXT_PUBLIC_ORGANIZATOR_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Organizator - ' deploy.log | awk '{print $NF}')"
-              [NEXT_PUBLIC_TICKET_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Ticket - ' deploy.log | awk '{print $NF}')"
-              [NEXT_PUBLIC_EVENT_MANAGER_CONTRACT]="$(grep 'TickethicWithEventManagerModule#EventManager - ' deploy.log | awk '{print $NF}')"
-              [NEXT_PUBLIC_EVENT_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Event - ' deploy.log | awk '{print $NF}')"
+              [NEXT_PUBLIC_TICKETHIC_CONTRACT]="$(grep 'TickethicModule#Tickethic - ' deploy.log | awk '{print $NF}')"
             )
 
             echo "Updating environment variables for $ENV_NAME in $REPO_OWNER/$REPO_NAME"
