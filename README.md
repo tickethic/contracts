@@ -31,6 +31,12 @@ This project includes:
 ```bash
 npm install
 ```
+## Sub module install
+You might need to install submodule locally.
+
+```bash
+git submodule update --init --recursive
+```
 
 ## Compilation
 **Needs to be fixed**
