@@ -23,7 +23,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: Deploy Forge submodules
-        run: git submodule update --init
+        run: git submodule update --init --recursive
 
       - name: Install Foundry dependencies
         run: forge install
