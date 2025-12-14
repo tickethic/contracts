@@ -9,8 +9,8 @@ contract ArtistTest is Test {
         address user = address(0x123);
         Artist artistContract = new Artist();
         vm.prank(user);
-        uint256 artistId = artistContract.mintArtist("Test Artist", "ipfs://testartist");
-        (string memory name, string memory metadataUri) = artistContract.getArtistInfo(artistId);
+        artistContract.mintArtist(user, "Test Artist", "ipfs://testartist");
+        (string memory name, string memory metadataUri) = artistContract.getArtistInfo(user);
         assertEq(name, "Test Artist");
         assertEq(metadataUri, "ipfs://testartist");
     }

@@ -23,7 +23,7 @@ jobs:
           scope: '@tickethic'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Clean workspace
         run: rm -rf ignition/deployments || true

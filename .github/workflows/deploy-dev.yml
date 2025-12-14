@@ -23,9 +23,7 @@ jobs:
           scope: '@tickethic'
 
       - name: Install dependencies
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install
+        run: npm ci
 
       - name: Clean workspace
         run: rm -rf ignition/deployments || true
@@ -35,7 +33,9 @@ jobs:
           HARDHAT_IGNITION_CONFIRM_DEPLOYMENT: true
           RPC_URL: ${{ vars.RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        run: npm run deploy:dynamic --network amoy | tee deploy.log
+        run: |
+          set -o pipefail
+          npm run deploy:dynamic --network amoy | tee deploy.log
 
       - name: Update environment variables from deploy logs
         env:
@@ -50,11 +50,7 @@ jobs:
             fi
 
             declare -A vars=(
-              [NEXT_PUBLIC_ARTIST_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Artist - ' deploy.log | awk '{print $NF}')"
-              [NEXT_PUBLIC_ORGANIZATOR_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Organizator - ' deploy.log | awk '{print $NF}')"
-              [NEXT_PUBLIC_TICKET_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Ticket - ' deploy.log | awk '{print $NF}')"
-              [NEXT_PUBLIC_EVENT_MANAGER_CONTRACT]="$(grep 'TickethicWithEventManagerModule#EventManager - ' deploy.log | awk '{print $NF}')"
-              [NEXT_PUBLIC_EVENT_CONTRACT]="$(grep 'TickethicWithEventManagerModule#Event - ' deploy.log | awk '{print $NF}')"
+              [NEXT_PUBLIC_TICKETHIC_CONTRACT]="$(grep 'TickethicModule#Tickethic - ' deploy.log | awk '{print $NF}')"
             )
 
             echo "Updating environment variables for $ENV_NAME in $REPO_OWNER/$REPO_NAME"
