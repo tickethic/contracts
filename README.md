@@ -29,24 +29,19 @@ This project includes:
 ## Installation
 
 ```bash
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
+forge install foundry-rs/forge-std
 npm install
 ```
-## Sub module install
-You might need to install submodule locally.
+
+## Run local polygon network
 
 ```bash
-git submodule update --init --recursive
-```
-
-## Compilation
-**Needs to be fixed**
-
-```bash
-npx hardhat compile
+npx hardhat node
 ```
 
 ## Testing
-**Needs to be fixed**
 
 ```bash
 # All tests
