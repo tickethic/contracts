@@ -14,13 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          submodules: recursive
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Install Forge
-        run: npm add --global @foundry-rs/forge@1.5
+      - name: Show Forge version
+        run: forge --version
+
+      - name: Run Forge fmt
+        run: forge fmt --check
 
       - name: Run Forge build
         run: forge build
