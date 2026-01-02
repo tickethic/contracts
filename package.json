@@ -6,6 +6,7 @@
   "files": [
     "dist/contract-addresses.json"
   ],
+  "description": "Generated contract addresses for Tickethic smart contracts. When you run `deploy:eventmanager` you can pass network name (i.e. localhost). Credits to : https://me.micahrl.com/blog/package-json-scripts-default-arguments/",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
@@ -16,6 +17,7 @@
   "scripts": {
     "test": "npx hardhat test",
     "compile": "hardhat compile",
+    "deploy:dynamic": "sh -c 'test $# -eq 0 && set -- localhost; cross-env HARDHAT_IGNITION_CONFIRM_DEPLOYMENT=true npx hardhat ignition deploy ignition/modules/deploy.ts --network \"$@\" && npx hardhat run scripts/generate-contract-addresses.ts --network \"$@\"' _",
     "deploy:amoy": "npx hardhat ignition deploy ignition/modules/deploy.ts --network amoy",
     "deploy:polygon": "npx hardhat ignition deploy ignition/modules/deploy.ts --network polygon"
   },
@@ -31,5 +33,6 @@
     "hardhat": "^3.0.15",
     "typescript": "~5.8.0",
     "viem": "^2.37.3"
-  }
+  },
+  "dependencies": {}
 }

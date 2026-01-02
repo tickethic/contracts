@@ -35,7 +35,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
           set -o pipefail
-          npm run deploy:amoy 2>&1 | tee deploy.log
+          npm run deploy:dynamic --network amoy | tee deploy.log
 
       - name: Update environment variables from deploy logs
         env:
