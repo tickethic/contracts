@@ -19,6 +19,9 @@ jobs:
           persist-credentials: false
           submodules: recursive
 
+      - name: Install NPM dependencies
+        run: npm ci
+
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
