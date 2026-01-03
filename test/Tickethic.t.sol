@@ -23,7 +23,6 @@ contract TickethicTest is Test {
         tickethicContract.createArtist("Artist1", "ipfs://artist1");
         tickethicContract.createArtist("Artist2", "ipfs://artist2", artist2);
 
-
         organizator1 = makeAddr("oragnizator1");
         organizator2 = makeAddr("oragnizator2");
 
@@ -84,14 +83,7 @@ contract TickethicTest is Test {
         uint256 totalTickets = 100;
 
         vm.prank(organizator2);
-        address eventAddr = tickethicContract.createEvent(
-            artists,
-            shares,
-            date,
-            metadataURI,
-            ticketPrice,
-            totalTickets
-        );
+        address eventAddr = tickethicContract.createEvent(artists, shares, date, metadataURI, ticketPrice, totalTickets);
 
         assertEq(tickethicContract.getAllEvents()[0], eventAddr);
 
@@ -115,6 +107,5 @@ contract TickethicTest is Test {
         assertEq(evTicketPrice, ticketPrice);
         assertEq(evTotalTickets, totalTickets);
     }
-} 
+}
 
- 

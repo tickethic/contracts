@@ -1,6 +1,9 @@
 # Node modules
 /node_modules
 
+# Forge dependency
+./lib/forge-std/
+
 # Compilation output
 /dist
 
